@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Template</title>
+</head>
+<body>
+<h1>Edit Template</h1>
+
+<form th:action="@{'/template/' + ${templateId} + '/generate'}" method="post">
+    <!-- Add hidden input for template id -->
+    <input type="hidden" name="templateId" th:value="${templateId}">
+    <label th:text="${templateId}"></label>
+    <h2>Replace Words:</h2>
+
+    <div th:each="word : ${replaceWords}">
+        <label th:text="${word.key}"></label>:
+        <!-- Check if word.value is not empty -->
+        <div th:if="${not #lists.isEmpty(word.value)}">
+            <select th:name="${word.key}">
+                <!-- Iterate over values of each replace word -->
+                <option th:each="value : ${word.value}" th:text="${value}"></option>
+            </select>
+        </div>
+        <!-- If word.value is empty, add input field for key -->
+        <div th:if="${#lists.isEmpty(word.value)}">
+            <input type="text" th:name="${word.key}" placeholder="Enter ${word.key}">
+        </div>
+        <br>
+    </div>
+
+    <!-- Add dropdown for selecting format -->
+    <label for="format">Select format:</label>
+    <select name="format" id="format">
+        <option value="DOCX">DOCX</option>
+        <option value="PDF">PDF</option>
+    </select>
+    <br>
+
+    <!-- Add button to submit form -->
+    <button type="submit" >Save</button>
+</form>
+</body>
+</html>
