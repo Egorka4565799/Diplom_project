@@ -28,11 +28,8 @@ public class TemplateController {
     @Autowired
     private TemplateService templateService;
 
-//    @Autowired
-//    private UserService userService;
-
-    @PostMapping("/upload-file")
-    public ResponseEntity<String> uploadTemplate(@RequestParam("file") MultipartFile file
+    @PostMapping()          //Загрузка шаблона
+    public ResponseEntity<?> uploadTemplate(@RequestParam("file") MultipartFile file
     ) throws IOException {
 
         logger.info("Uploading starting...");
@@ -41,11 +38,11 @@ public class TemplateController {
                 return ResponseEntity.badRequest().body("The file is empty, please attach the file");
             }
 
-            // Логика для сохранения файла в базе данных или файловой системе
-            templateService.uploadTemplate(file);
+            // Логика для сохранения файла и парсинга переменных
+            Long templateId = templateService.uploadTemplate(file);
             logger.info("Uploading finish");
 
-            return ResponseEntity.ok("Template uploaded successfully");
+            return ResponseEntity.ok(templateId);
 
         } catch (Exception e){
             logger.error("Error uploading ex:{}",e.getMessage(),e);
@@ -54,17 +51,37 @@ public class TemplateController {
 
     }
 
-    @PostMapping("/upload-file-replace-word")
-    public ResponseEntity<String> uploadTemplate(@RequestBody List<ReplaceWordMapping> replaceWord,
-                                                 @RequestParam("fileName") String fileName,
-                                                 @RequestParam("categoryId") Long categoryId
-    ) throws IOException {
+//    @PostMapping("/upload-file-replace-word")
+//    public ResponseEntity<String> uploadTemplate(@RequestBody List<ReplaceWordMapping> replaceWord,
+//                                                 @RequestParam("fileName") String fileName,
+//                                                 @RequestParam("categoryId") Long categoryId
+//    ) throws IOException {
+//
+//        logger.info("Adding replaceWord starting...");
+//        try{
+//
+//            // Логика для сохранения файла в базе данных или файловой системе
+//            templateService.addReplaceWordsToTemplate(fileName,replaceWord,categoryId);
+//            logger.info("Adding finish");
+//
+//            return ResponseEntity.ok("ReplaceWord Adding successfully");
+//
+//        } catch (Exception e){
+//            logger.error("Error adding ex:{}",e.getMessage(),e);
+//            return ResponseEntity.status(HttpStatusCode.valueOf(500)).body("Failed to adding file");
+//        }
+//
+//    }
 
+    @PutMapping("{id}/replace-word") //Замена значений переменных
+    public ResponseEntity<?> updateReplaceWord(@PathVariable("id") Long id,
+                                               @RequestBody List<ReplaceWordMapping> replaceWord
+    ) throws IOException{
         logger.info("Adding replaceWord starting...");
         try{
 
             // Логика для сохранения файла в базе данных или файловой системе
-            templateService.addReplaceWordsToTemplate(fileName,replaceWord,categoryId);
+            templateService.addReplaceWordsToTemplate(id,replaceWord);
             logger.info("Adding finish");
 
             return ResponseEntity.ok("ReplaceWord Adding successfully");
@@ -73,10 +90,29 @@ public class TemplateController {
             logger.error("Error adding ex:{}",e.getMessage(),e);
             return ResponseEntity.status(HttpStatusCode.valueOf(500)).body("Failed to adding file");
         }
-
     }
 
-    @GetMapping("/all")
+    @PutMapping("{id}/category") //Замена категории шаблона
+    public ResponseEntity<?> updateReplaceWord(@PathVariable("id") Long id,
+                                               @RequestParam("categoryId") Long categoryId
+    ) throws IOException{
+        logger.info("Update category starting...");
+        try{
+
+            // Логика для сохранения файла в базе данных или файловой системе
+            templateService.updateCategoryToTemplate(id,categoryId);
+            logger.info("Update category finish");
+
+            return ResponseEntity.ok("Update category successfully");
+
+        } catch (Exception e){
+            logger.error("Error update category ex:{}",e.getMessage(),e);
+            return ResponseEntity.status(HttpStatusCode.valueOf(500)).body("Failed to update category");
+        }
+    }
+
+
+    @GetMapping()  // Получить список всех шаблонов
     public ResponseEntity<Map<Long,String>> getAllTemplate() throws IOException {
 
         Map<Long, String> templates = new HashMap<>();
@@ -86,15 +122,14 @@ public class TemplateController {
         return ResponseEntity.ok(templates);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<ReplaceWordMappingPresentor>> getAllTemplate(@PathVariable("id") Long id) throws IOException {
+    @GetMapping("/{id}/replace-words-mapping")
+    public ResponseEntity<List<ReplaceWordMappingPresentor>> getTemplateId(@PathVariable("id") Long id) throws IOException {
 
         List<ReplaceWordMapping> replaceWords = new ArrayList<>();
 
         replaceWords=templateService.getReplaceWordsTemplate(id);
 
         //Сериализация ответа
-        //........
         // Преобразуем список ReplaceWordMapping в список ReplaceWordMappingPresentor
         List<ReplaceWordMappingPresentor> presentors = replaceWords.stream()
                 .map(ReplaceWordMappingPresentor::new)
@@ -104,11 +139,18 @@ public class TemplateController {
     }
 
 
-    @PostMapping("/get-replace-words")
-    public ResponseEntity<List<String>> getReplaceWord(@RequestParam("file") MultipartFile file
+    @GetMapping("/{id}/replace-words")// Получить список только переменных в шаблоне
+    public ResponseEntity<List<String>> getReplaceWord(@PathVariable("id") Long id
     ) throws IOException {
 
-        List<String> replaceWords = templateService.parsingTemplate(file);
+        List<ReplaceWordMapping> replaceWordsMapping =templateService.getReplaceWordsTemplate(id);
+        System.out.println("replaceWordsMapping="+replaceWordsMapping);
+        //Сериализация ответа
+        // Преобразуем список ReplaceWordMapping в список переменных
+        List<String> replaceWords = replaceWordsMapping.stream()
+                .map(ReplaceWordMapping::getKey)
+                .collect(Collectors.toList());
+        System.out.println("replaceWords="+replaceWords);
         return ResponseEntity.ok(replaceWords);
     }
 

@@ -1,0 +1,71 @@
+form {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 600px;
+}
+
+label {
+    color: #6C6C6C;
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+button[type="submit"] {
+    background-color: #6598CE;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #4a77b3;
+}
+
+select {
+    margin-right: 10px;
+}
+
+#categoryModal {
+    display: none;
+    margin-bottom: 10px;
+}
+
+#words {
+    text-align: left;
+}
+
+#words ul {
+    list-style: none;
+    padding: 0;
+}
+
+#words ul li {
+    margin-bottom: 10px;
+}
+
+.add-replacement-label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: lightblue;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#replacements input[type="text"] {
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}

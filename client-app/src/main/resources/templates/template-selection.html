@@ -1,17 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Template</title>
+
+    <link rel="stylesheet" href="/static/css/body.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/template-selection.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
 </head>
 <body>
-<h1>Select Template</h1>
-<ul>
-    <!-- Выводим список шаблонов -->
-    <li th:each="template : ${templates}">
-        <a th:href="@{/template/{id}(id=${template.key})}" th:text="${template.value}"></a>
-    </li>
-</ul>
+    <header>
+        <h1>Выберите шаблон</h1>
+    </header>
+    <main>
+        <ul class="template-list">
+            <!-- Выводим список шаблонов -->
+            <li th:each="template : ${templates}" class="template-item">
+                <a th:href="@{/template/{id}(id=${template.key})}" th:text="${template.value}" class="template-link">Какой-то шаблон</a>
+            </li>
+        </ul>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>О нас</h3>
+                <p>Наша деятельность направлена на упрощение процесса создания шабллонов для различных целей. Наша команда стремится помочь вам найти идеальный дизайн для вашего проекта.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Ссылки:</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Связь с нами:</h3>
+                <p>Email: 4epT@gmail.com</p>
+                <p>Phone: +7(666)-(666)-66-66</p>
+                <p>Адрес: Преисподняя, 9 круг, ул. Страданий, д. 666</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Подписывайтесь</h3>
+                <ul>
+                    <li><a href="#"><img src="facebook-icon.png" alt="Facebook"></a></li>
+                    <li><a href="#"><img src="twitter-icon.png" alt="Twitter"></a></li>
+                    <li><a href="#"><img src="instagram-icon.png" alt="Instagram"></a></li>
+                    <li><a href="#"><img src="linkedin-icon.png" alt="LinkedIn"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Your Company. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

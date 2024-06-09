@@ -29,11 +29,6 @@ public class Template {
     @JoinColumn(name = "category_id")
     private Category category;
 
-//    @ElementCollection
-//    @CollectionTable(name = "replace_word_mapping", joinColumns = @JoinColumn(name = "id"))
-//    @MapKeyColumn(name = "replace_word_key")
-//    @Column(name = "replace_word_value")
-//    private Map<String, List<String>> replaceWord;
 
     @ManyToOne(fetch = FetchType.LAZY) // Множество шаблонов принадлежит одному пользователю
     @JoinColumn(name = "user_id") // Связь по полю user_id

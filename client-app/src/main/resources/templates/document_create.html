@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание документа</title>
+    <link rel="stylesheet" href="/css/document_create.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <!-- 
+    <link rel="stylesheet" href="/css/body.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/document-creation-form.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    -->
+</head>
+<body>
+    <header>
+        Шапка
+    </header>
+
+    <form id = "documentForm" th:action="@{'/template/' + ${templateId} + '/generate'}" method="post">
+    <div class="settings-bar">
+        <div class="doc-name" id="doc-name-text" th:text="${templateName}"></div>
+        <div class="docx-pdf-img" id="docx-img" onclick="selectFormat('DOCX')"><img src="/img/html_docx.png" alt="PDF"></div>
+        <div class="docx-pdf-img" id="pdf-img" onclick="selectFormat('PDF')"><img src="/img/html_pdf.png" alt="DOCX"></div>
+    </div>
+    
+    <div class="container">
+        <div class="filter">
+            <div>Замените слова</div>
+            <hr/>
+
+                <!-- Add hidden input for template id -->
+                <input type="hidden" name="templateId" th:value="${templateId}">
+                <!-- Add hidden input for format -->
+                <input type="hidden" id="format" name="format" value="DOCX">
+
+                <div th:each="word : ${replaceWords}">
+                    <label th:text="${word.key}"></label>:
+                    <!-- Check if word.value is not empty -->
+                    <div th:if="${not #lists.isEmpty(word.value)}">
+                        <select th:name="${word.key}">
+                            <!-- Iterate over values of each replace word -->
+                            <option th:each="value : ${word.value}" th:text="${value}"></option>
+                        </select>
+                    </div>
+                    <!-- If word.value is empty, add input field for key -->
+                    <div th:if="${#lists.isEmpty(word.value)}">
+                        <input type="text" th:name="${word.key}" placeholder="Enter ${word.key}">
+                    </div>
+
+                    <br>
+                </div>
+
+        </div>
+    <div class="text">
+        <div><p>Поле для текста</p></div>
+        <!-- <div class="loader" id="loader" style="display: none;"></div> -->
+            <iframe id="documentView" style="width:100%; height:500px;"></iframe>
+        </div>
+        <button class="toggle-button" id="toggleButton" type="button">⮞</button>
+    </div>
+
+    <div class="download-section">
+        <button class="download-button-start" id="download-button-start"  onclick="startDownload()">Скачать документ</button>
+        <div class="overlay" id="overlay" style="display: none;">
+            <div class="loader"></div>
+        </div>    
+    </div>
+    </form>
+    <footer>
+        <p>&copy; 2024 Все права защищены</p>
+    </footer>    
+
+    <script src="/js/document_create.js"></script>\
+</body>
+</html>

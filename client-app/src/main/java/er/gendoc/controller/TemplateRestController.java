@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class TemplateRestController {
         this.restTemplate = new RestTemplate();
     }
 
-    @GetMapping("/upload_template")
+    @GetMapping("/upload_template")// Открыть страницу загрузки шаблона
     public String getGreetingsPage(Model model) {
 
         // Создаем HTTP заголовки и устанавливаем токен доступа
@@ -58,12 +59,12 @@ public class TemplateRestController {
         );
 
         model.addAttribute("categories",response.getBody());
-        return "upload_template";
+        return "upload_template_new";
     }
 
 
-    @PostMapping("/template-api-upload-file")
-    public ResponseEntity<String> uploadTemplate(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/template-upload")// Загрузка шаблона
+    public ResponseEntity<?> uploadTemplate(@RequestParam("file") MultipartFile file) {
         // Получаем токен доступа
         String token = getToken();
 
@@ -80,20 +81,24 @@ public class TemplateRestController {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // Отправляем запрос на сервер во второй контроллер
-        ResponseEntity<String> response = restTemplate.exchange(
-                "http://localhost:8083/templates/upload-file",
+        ResponseEntity<Long> response = restTemplate.exchange(
+                "http://localhost:8083/templates",
                 HttpMethod.POST,
                 requestEntity,
-                String.class);
+                Long.class);
+        Long fileId = response.getBody();
+        System.out.println("id="+fileId);
 
-        return response;
+        // Возвращаем id в JSON формате
+        Map<String, Long> responseBody = new HashMap<>();
+        responseBody.put("id", fileId);
+        return ResponseEntity.ok(responseBody);
     }
 
 
-    @PostMapping("/template-api-upload-replace-word")
+    @PostMapping("/template-replace-word")// Внести константные замены для переменных
     public ResponseEntity<String> uploadTemplate(@RequestBody List<ReplaceWordMapping> replaceWord,
-                                                 @RequestParam("fileName") String fileName,
-                                                 @RequestParam("categoryId") long categoryId) {
+                                                 @RequestParam("fileId") Long fileId) {
         // Получаем токен доступа
         String token = getToken();
 
@@ -106,15 +111,9 @@ public class TemplateRestController {
                 replaceWord
         );
 
-        System.out.println(
-                "Категория: " + categoryId
-        );
-
         // Строим URL с именем файла как параметром
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8083/templates/upload-file-replace-word")
-                .queryParam("fileName", fileName)
-                .queryParam("categoryId", categoryId);
-
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl("http://localhost:8083/templates/"+fileId+"/replace-word");
 
 
         // Подготавливаем тело запроса
@@ -123,15 +122,15 @@ public class TemplateRestController {
         // Отправляем запрос на сервер
         ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(), // Используем построенный URL
-                HttpMethod.POST,
+                HttpMethod.PUT,
                 requestEntity,
                 String.class);
 
         return response;
     }
 
-    @PostMapping("/view-replace-word")
-    public ResponseEntity<List<String>> viewReplaceWord(@RequestParam("file") MultipartFile file, Model model){
+    @GetMapping("/view-replace-word")// Получить список переменных
+    public ResponseEntity<List<String>> viewReplaceWord(@RequestParam("fileId") Long fileId, Model model){
         // Получаем токен доступа
         String token = getToken();
 
@@ -142,30 +141,22 @@ public class TemplateRestController {
 
         // Подготавливаем тело запроса
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", file.getResource());
 
         // Создаем запрос с заголовками и телом
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // Отправляем запрос на сервер во второй контроллер
         ResponseEntity<List<String>> response = restTemplate.exchange(
-                "http://localhost:8083/templates/get-replace-words",
-                HttpMethod.POST,
+                "http://localhost:8083/templates/"+fileId+"/replace-words",
+                HttpMethod.GET,
                 requestEntity,
                 new ParameterizedTypeReference<List<String>>() {});
 
+        System.out.println(response);
         return response;
-        // Получаем replace words выбранного шаблона из ответа сервера
-        //List<String> replaceWords = response.getBody();
-
-        // Помещаем replace words в модель, чтобы они были доступны в HTML шаблоне
-        //model.addAttribute("words", replaceWords);
-        //model.addAttribute("file", file);
-
-        //return "upload_template";
     }
 
-    @PostMapping("/add-category")
+    @PostMapping("/add-category") // Добавить категорию
     public ResponseEntity<String> addCategory(@RequestParam("categoryName") String categoryName){
         // Получаем токен доступа
         String token = getToken();
@@ -180,7 +171,7 @@ public class TemplateRestController {
         headers.setBearerAuth(token);
 
         // Подготовка URL с параметрами
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8083/categories/add-category")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8083/categories")
                 .queryParam("categoryName", categoryName);
 
         // Подготавливаем тело запроса

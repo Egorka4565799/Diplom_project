@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class TemplateService {
     //----------- Загрузка, обновление и удаление ----------------------------------
 
     @Transactional
-    public void uploadTemplate(MultipartFile file) throws IOException {
+    public Long uploadTemplate(MultipartFile file) throws IOException {
         logger.info("Start uploading: {}",file.getOriginalFilename());
 
         try {
@@ -50,31 +51,115 @@ public class TemplateService {
             // Сохраняем файл в виде Large Object (LOB) в базе данных
             template.setTemplateData(file.getBytes());
 
-            //user.addTemplate(template);
+            //-------
+            // Парсинг шаблона для получения списка переменных
+            List<String> variables = parsingTemplate(file);
 
+            // Создание списка ReplaceWordMapping с пустыми значениями для переменных
+            List<ReplaceWordMapping> mappings = new ArrayList<>();
+            for (String variable : variables) {
+                ReplaceWordMapping mapping = new ReplaceWordMapping();
+                mapping.setKey(variable);
+                mapping.setValue(new ArrayList<>());  // Пустой список для значений
+                mapping.setTemplate(template);
+                mappings.add(mapping);
+            }
+            // Сохранаяем список переменных в бд
+            template.setReplaceWordMappings(mappings);
+            //-------
             templateRepository.save(template);
             logger.info("Uploading successfully: {}",template.getTemplateName());
+
+            // Возвращаем ID созданного шаблона
+            return template.getId();
         }
         catch(Exception e){
             logger.error("Error upload! :{}", e.getMessage());
         }
+        return null;
     }
 
-    public void addReplaceWordsToTemplate(String fileName, List<ReplaceWordMapping> replaceWords, Long categoryId) {
+//    public void addReplaceWordsToTemplate2(String fileName, List<ReplaceWordMapping> replaceWords, Long categoryId) {
+//        // Находим шаблон по имени файла
+//        Template template = templateRepository.findByTemplateName(fileName);
+//        if (template == null) {
+//            // Если шаблон не найден, можно выбросить исключение или выполнить другие действия
+//            throw new IllegalArgumentException("Template with filename " + fileName + " not found");
+//        }
+//        Optional<Category> category = categoryRepostory.findById(categoryId);
+//
+//
+//        template.setCategories(category.get());
+//        // Добавляем слова для замены к найденному шаблону
+//        List<ReplaceWordMapping> existingReplaceWords = template.getReplaceWordMappings();
+//        existingReplaceWords.addAll(replaceWords);
+//        template.setReplaceWordMappings(existingReplaceWords);
+//        // Сохраняем обновленный шаблон в базу данных
+//        templateRepository.save(template);
+//    }
+
+    public void addReplaceWordsToTemplate(Long fileId, List<ReplaceWordMapping> newReplaceWords) {
         // Находим шаблон по имени файла
-        Template template = templateRepository.findByTemplateName(fileName);
+        Template template = templateRepository.findById(fileId).orElse(null);
+
         if (template == null) {
             // Если шаблон не найден, можно выбросить исключение или выполнить другие действия
-            throw new IllegalArgumentException("Template with filename " + fileName + " not found");
+            throw new IllegalArgumentException("Template with id " + fileId + " not found");
         }
-        Optional<Category> category = categoryRepostory.findById(categoryId);
 
-
-        template.setCategories(category.get());
-        // Добавляем слова для замены к найденному шаблону
+        // Получаем существующие слова для замены
         List<ReplaceWordMapping> existingReplaceWords = template.getReplaceWordMappings();
-        existingReplaceWords.addAll(replaceWords);
-        template.setReplaceWordMappings(existingReplaceWords);
+        Map<String, ReplaceWordMapping> existingReplaceWordsMap = existingReplaceWords.stream()
+                .collect(Collectors.toMap(ReplaceWordMapping::getKey, Function.identity()));
+
+        // Обновляем существующие слова или добавляем новые
+        for (ReplaceWordMapping newReplaceWord : newReplaceWords) {
+            ReplaceWordMapping existingReplaceWord = existingReplaceWordsMap.get(newReplaceWord.getKey());
+            if (existingReplaceWord != null) {
+                // Обновляем значение существующего слова для замены
+                existingReplaceWord.setValue(newReplaceWord.getValue());
+            } else {
+                // Добавляем новое слово для замены
+                newReplaceWord.setTemplate(template);
+                existingReplaceWords.add(newReplaceWord);
+            }
+        }
+
+//        // Добавляем слова для замены к найденному шаблону
+//        List<ReplaceWordMapping> existingReplaceWords = template.getReplaceWordMappings();
+//        existingReplaceWords.addAll(replaceWords);
+
+        // Добавляем слова для замены к найденному шаблону
+        //template.setReplaceWordMappings(existingReplaceWords);
+
+        // Сохраняем обновленный шаблон в базу данных
+        templateRepository.save(template);
+
+        //Template template2 = templateRepository.findById(fileId).orElse(null);
+        // Получаем существующие слова для замены
+        //List<ReplaceWordMapping> existingReplaceWords2 = template2.getReplaceWordMappings();
+        //System.out.println("existingReplaceWords=   "+existingReplaceWords2);
+    }
+
+    public void updateCategoryToTemplate(Long fileId, Long categoryId) {
+        // Находим шаблон по имени файла
+        Template template = templateRepository.findById(fileId).orElse(null);
+
+        if (template == null) {
+            // Если шаблон не найден, можно выбросить исключение или выполнить другие действия
+            throw new IllegalArgumentException("Template with id " + fileId + " not found");
+        }
+
+        Category category = categoryRepostory.findById(categoryId).orElse(null);
+
+        if (category == null) {
+            // Если шаблон не найден, можно выбросить исключение или выполнить другие действия
+            throw new IllegalArgumentException("Category with id " + categoryId + " not found");
+        }
+
+        //обавляем категорию
+        template.setCategories(category);
+
         // Сохраняем обновленный шаблон в базу данных
         templateRepository.save(template);
     }

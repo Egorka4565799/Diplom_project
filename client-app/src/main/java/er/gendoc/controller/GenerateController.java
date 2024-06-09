@@ -3,6 +3,7 @@ package er.gendoc.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import er.gendoc.resentator.DocumentFormat;
 import er.gendoc.resentator.ReplaceWordMapping;
+import er.gendoc.resentator.TemplateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +50,7 @@ public class GenerateController {
 
         // Получаем данные о templates с сервера с использованием объекта запроса
         ResponseEntity<Map<Long, String>> response = restTemplate.exchange(
-                "http://localhost:8083/templates/all",
+                "http://localhost:8083/templates",
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<Map<Long, String>>() {});
@@ -74,21 +77,48 @@ public class GenerateController {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // Делаем GET запрос на сервер, передавая идентификатор шаблона
-        ResponseEntity<List<ReplaceWordMapping>> response = restTemplate.exchange(
-                "http://localhost:8083/templates/" + id,
+//        ResponseEntity<List<ReplaceWordMapping>> response = restTemplate.exchange(
+//                "http://localhost:8083/templates/" + id +"/replace-words-mapping",
+//                HttpMethod.GET,
+//                entity,
+//                new ParameterizedTypeReference<List<ReplaceWordMapping>>() {}
+//        );
+        ResponseEntity<TemplateResponse> response = restTemplate.exchange(
+                "http://localhost:8083/templates/" + id,// +"/replace-words-mapping",
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<ReplaceWordMapping>>() {}
+                TemplateResponse.class
         );
 
         // Получаем replace words выбранного шаблона из ответа сервера
-        List<ReplaceWordMapping> replaceWords = response.getBody();
+//        List<ReplaceWordMapping> replaceWords = response.getBody();
+//
+//        // Помещаем replace words в модель, чтобы они были доступны в HTML шаблоне
+//        model.addAttribute("replaceWords", replaceWords);
+//        model.addAttribute("templateId", id);
 
-        // Помещаем replace words в модель, чтобы они были доступны в HTML шаблоне
+
+        // Получаем данные из ответа сервера
+        TemplateResponse templateResponse = response.getBody();
+        byte[] documentContent = templateResponse.getDocumentContent();
+        List<ReplaceWordMapping> replaceWords = templateResponse.getReplaceWordMappings();
+        String documentName = templateResponse.getDocumentName();
+        System.out.println("File= "+ documentContent);
+
+        // Кодируем байты документа в строку Base64
+        String documentContentBase64 = Base64.getEncoder().encodeToString(documentContent);
+        System.out.println("documentContentBase64= "+ documentContentBase64);
+        // Преобразуем байты документа в строку для отображения (например, если это текстовый файл)
+        //String documentText = new String(documentContent);
+
+        // Помещаем данные в модель, чтобы они были доступны в HTML шаблоне
+        model.addAttribute("documentContent", documentContentBase64);
         model.addAttribute("replaceWords", replaceWords);
+        model.addAttribute("templateName", documentName);
         model.addAttribute("templateId", id);
+
         // Возвращаем имя HTML шаблона, который будет использоваться для отображения редактирования шаблона
-        return "document-creation-form";
+        return "document_create";
     }
 
 //    @PostMapping("/template/{id}/generate")

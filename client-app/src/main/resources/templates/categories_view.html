@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Категории</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .category-item button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center">Управление категориями</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <input type="text" id="searchCategory" class="form-control" placeholder="Поиск категории по имени">
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <input type="text" id="newCategoryName" class="form-control" placeholder="Введите имя новой категории">
+            <button class="btn btn-primary btn-block mt-2" onclick="addCategory()">Создать новую категорию</button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3" id="categoryList">
+            <!-- Список категорий -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let categories = ['Категория 1', 'Категория 2', 'Категория 3'];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        displayCategories();
+
+        document.getElementById('searchCategory').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            displayCategories(searchTerm);
+        });
+    });
+
+    function displayCategories(searchTerm = '') {
+        const categoryList = document.getElementById('categoryList');
+        categoryList.innerHTML = '';
+
+        categories.filter(category => category.toLowerCase().includes(searchTerm)).forEach(category => {
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'category-item';
+            categoryItem.innerHTML = `
+                <span>${category}</span>
+                <button class="btn btn-secondary" onclick="editCategory('${category}')">Редактировать</button>
+            `;
+            categoryList.appendChild(categoryItem);
+        });
+    }
+
+    function addCategory() {
+        const newCategoryName = document.getElementById('newCategoryName').value.trim();
+        if (newCategoryName) {
+            categories.push(newCategoryName);
+            displayCategories();
+            document.getElementById('newCategoryName').value = '';
+        }
+    }
+
+    function editCategory(category) {
+        const newCategoryName = prompt('Введите новое имя для категории', category);
+        if (newCategoryName) {
+            const index = categories.indexOf(category);
+            if (index !== -1) {
+                categories[index] = newCategoryName;
+                displayCategories();
+            }
+        }
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

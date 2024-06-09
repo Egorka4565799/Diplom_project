@@ -24,7 +24,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping()
-    public ResponseEntity<List<CategoryPresentator>> getAll() throws IOException {
+    public ResponseEntity<List<CategoryPresentator>> getAllCategorys() throws IOException {
 
         List<Category> categories =  categoryService.getAll();
 
@@ -36,8 +36,8 @@ public class CategoryController {
         return ResponseEntity.ok(presentors);
     }
 
-    @PostMapping("/add-category")
-    public ResponseEntity<String> getReplaceWord(@RequestParam("categoryName") String categoryName
+    @PostMapping()
+    public ResponseEntity<String> addCategory(@RequestParam("categoryName") String categoryName
     ) throws IOException {
 
         categoryService.addCategory(categoryName);
@@ -46,5 +46,29 @@ public class CategoryController {
         System.out.println(categoryName);
 
         return ResponseEntity.ok("Successfully add category");
+    }
+
+    @PutMapping("/{id}")//Реализовать
+    public ResponseEntity<String> updateGategoryId(){
+
+        ///Реализация
+
+        return ResponseEntity.ok("Successfully update category");
+    }
+
+    @GetMapping("/{id}")//Реализовать
+    public ResponseEntity<String> getGategoryId(){
+
+        ///Реализация
+
+        return ResponseEntity.ok("Successfully update category");
+    }
+
+    @DeleteMapping("/{id}")//Реализовать
+    public ResponseEntity<String> deleteGategoryId(){
+
+        ///Реализация
+
+        return ResponseEntity.ok("Successfully update category");
     }
 }

@@ -2,8 +2,11 @@ package sever.application.controller;
 
 
 import sever.application.model.DocumentFormat;
+import sever.application.model.ReplaceWordMapping;
 import sever.application.model.Template;
 import sever.application.model.User;
+import sever.application.presentator.ReplaceWordMappingPresentor;
+import sever.application.presentator.TemplateResponse;
 import sever.application.repository.TemplateRepository;
 import sever.application.service.DocumentService;
 import sever.application.service.TemplateService;
@@ -14,8 +17,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/templates")
@@ -54,18 +60,44 @@ public class DocumentController {
             this.variables = variables;
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTempalte(@PathVariable("id") Long id) throws IOException{
+
+        try {
+            Template template = documentService.findById(id);
+
+            if (template == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Template not found");
+            }
+
+            byte[] documentContent = template.getTemplateData();
+            String documentName = template.getTemplateName();
+
+            List<ReplaceWordMapping> replaceWords = new ArrayList<>();
+
+            replaceWords=templateService.getReplaceWordsTemplate(id);
+
+            System.out.println("document = "+documentContent);
+            //Сериализация ответа
+            // Преобразуем список ReplaceWordMapping в список ReplaceWordMappingPresentor
+            List<ReplaceWordMappingPresentor> replaceWordMappings = replaceWords.stream()
+                    .map(ReplaceWordMappingPresentor::new)
+                    .collect(Collectors.toList());
+            TemplateResponse response = new TemplateResponse(documentContent, replaceWordMappings,documentName);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve document");
+        }
+    }
+
     @PostMapping("/{id}/generate")
     public ResponseEntity<?> generateDocument(@PathVariable("id") Long id,
                                               @RequestBody GenerateDocumentRequest request
-                                              //@RequestParam DocumentFormat format
-                                              //@RequestParam Map<String, String> variables
                                               ) throws IOException {
 
         try {
-
-//            if (user == null) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user is not found, please log in");
-//            }
 
             //Map <String,String> variables = new HashMap<>();
             //variables.put("{@Vvedenie}","Valera");
@@ -97,8 +129,6 @@ public class DocumentController {
 
             byte[] documentBytes = documentService.generateDocumentFromTemplate(template, request.variables, request.format);
 
-//            User existingUser = userService.findUserById(user.getId());
-//            userService.plusDownloadTemplates(existingUser);
 
             return new ResponseEntity<>(documentBytes, headers, HttpStatus.OK);
         }catch (Exception e){
@@ -106,4 +136,6 @@ public class DocumentController {
         }
 
     }
+
+
 }

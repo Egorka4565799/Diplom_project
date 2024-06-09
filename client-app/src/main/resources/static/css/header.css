@@ -1,0 +1,16 @@
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 50px auto;
+    max-width: 600px;
+}
+
+header h1 {
+    color: #6598CE;
+}
+header h2 {
+    color: #6598CE;
+}

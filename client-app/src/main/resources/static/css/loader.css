@@ -1,0 +1,93 @@
+/* Общие стили */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Стили для кнопок загрузки */
+.download-button-start,
+.download-button-stop {
+    background-color: #69c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.download-button-start {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+}
+
+.download-button-stop {
+    margin-left: 30px;
+}
+
+.download-button-start:hover,
+.download-button-stop:hover {
+    background-color: #b7c2d8;
+}
+
+/* Стили для загрузочной анимации */
+.loader {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.loader::before,
+.loader::after {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+}
+
+.loader::before {
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    border: 10px solid rgba(0, 0, 0, 0.1);
+}
+
+.loader::after {
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    margin-left: -5px;
+    background: #69c;
+    animation: spin 1.5s linear infinite, trail 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg) translate(45px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translate(45px) rotate(-360deg);
+    }
+}
+
+@keyframes trail {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(76, 175, 80, 0.7),
+                    -10px -10px 10px rgba(76, 175, 80, 0),
+                    -20px -20px 20px rgba(76, 175, 80, 0),
+                    -30px -30px 30px rgba(76, 175, 80, 0),
+                    -40px -40px 40px rgba(76, 175, 80, 0);
+    }
+}
