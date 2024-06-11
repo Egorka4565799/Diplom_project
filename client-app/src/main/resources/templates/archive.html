@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .search-container {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+        .results-container {
+            flex: 2;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .table-container {
+            height: calc(100vh - 160px); /* Adjust height based on your header and padding/margin */
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="search-container">
+        <h1>Document Archive</h1>
+        <form th:action="@{/search}" method="get">
+            <div class="form-group">
+                <label for="name">Search by Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Document Name">
+            </div>
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" class="form-control">
+            </div>
+            <button type="button" class="btn btn-primary">Сброс</button>
+        </form>
+    </div>
+    <div class="results-container">
+        <h2>Documents</h2>
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Date Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="document : ${documents}">
+                    <td th:text="${document.Id}"></td>
+                    <td th:text="${document.Name}"></td>
+                    <td th:text="${#dates.format(document.dateCreate, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем ссылки на элементы формы и результатов
+        var nameInput = document.getElementById('name');
+        var startDateInput = document.getElementById('startDate');
+        var endDateInput = document.getElementById('endDate');
+        var tableRows = document.querySelectorAll('.table tbody tr');
+         var resetButton = document.querySelector('.btn.btn-primary');
+
+        // Функция для фильтрации документов по имени
+        function filterByName() {
+            var filterText = nameInput.value.trim().toLowerCase();
+            tableRows.forEach(function(row) {
+                var documentName = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+                if (documentName.includes(filterText)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Функция для фильтрации документов по дате
+        function filterByDate() {
+            var startDate = new Date(startDateInput.value);
+            var endDate = new Date(endDateInput.value);
+            tableRows.forEach(function(row) {
+                var documentDate = new Date(row.querySelector('td:nth-child(3)').textContent);
+                if ((!startDateInput.value || documentDate >= startDate) && (!endDateInput.value || documentDate <= endDate)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+         // Функция для сброса фильтрации и возвращения полей ввода к начальному состоянию
+    function resetFilters() {
+        nameInput.value = '';
+        startDateInput.value = '';
+        endDateInput.value = '';
+        tableRows.forEach(function(row) {
+            row.style.display = '';
+        });
+    }
+
+        // Добавляем обработчики событий для полей ввода
+        nameInput.addEventListener('input', filterByName);
+        startDateInput.addEventListener('input', filterByDate);
+        endDateInput.addEventListener('input', filterByDate);
+        resetButton.addEventListener('click', resetFilters);
+    });
+</script>
+</body>
+</html>

@@ -4,6 +4,8 @@ package sever.application.service;
 import sever.application.model.DocumentFormat;
 
 import sever.application.model.Template;
+import sever.application.presentator.DocumentPresentator;
+import sever.application.presentator.TemplatePresentator;
 import sever.application.repository.DocumentRepository;
 import sever.application.repository.TemplateRepository;
 
@@ -14,8 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 
 import javax.imageio.ImageIO;
@@ -92,6 +95,16 @@ public class DocumentService {
         System.out.println(date);
 
         documentRepository.save(document);
+
+    }
+
+    public List<DocumentPresentator> getAllDocument(){
+
+        List<sever.application.model.Document> documents = documentRepository.findAll();
+
+        return documents.stream()
+                .map(DocumentPresentator::new)
+                .collect(Collectors.toList());
 
     }
 }

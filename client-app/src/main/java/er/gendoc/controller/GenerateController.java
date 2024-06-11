@@ -129,35 +129,6 @@ public class GenerateController {
         return "document_create";
     }
 
-//    @PostMapping("/template/{id}/generate")
-//    @ResponseBody
-//    public ResponseEntity<?> generateDocument(@PathVariable("id") Long id,
-//                                                   @RequestBody GenerateDocumentRequest request)
-//            throws IOException {
-//
-//        // Получаем токен доступа
-//        String token = getToken();
-//
-//        // Формируем URL для отправки запроса на сервер
-//        String url = "http://localhost:8083/templates/" + id + "/generate";
-//
-//        // Создаем заголовки для запроса
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setBearerAuth(token);
-//        // Создаем объект запроса с установленными заголовками
-//        HttpEntity<GenerateDocumentRequest> entity = new HttpEntity<>(request, headers);
-//
-//        // Отправляем POST-запрос на сервер и получаем ответ
-//        ResponseEntity<?> responseEntity = restTemplate.exchange(
-//                url,
-//                HttpMethod.POST,
-//                entity,
-//                byte[].class);
-//
-//        // Возвращаем ответ клиенту
-//        return responseEntity;
-//    }
 
     @PostMapping("/template/{id}/generate")
     public ResponseEntity<?> generateDocument(@PathVariable("id") Long id,
@@ -188,6 +159,8 @@ public class GenerateController {
         // Возвращаем ответ клиенту
         return responseEntity;
     }
+
+
 
     private String getToken() {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("client-app")

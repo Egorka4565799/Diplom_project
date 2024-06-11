@@ -5,7 +5,9 @@ import sever.application.model.DocumentFormat;
 import sever.application.model.ReplaceWordMapping;
 import sever.application.model.Template;
 import sever.application.model.User;
+import sever.application.presentator.DocumentPresentator;
 import sever.application.presentator.ReplaceWordMappingPresentor;
+import sever.application.presentator.TemplatePresentator;
 import sever.application.presentator.TemplateResponse;
 import sever.application.repository.TemplateRepository;
 import sever.application.service.DocumentService;
@@ -24,7 +26,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/templates")
 public class DocumentController {
 
     @Autowired
@@ -61,7 +62,7 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/templates/{id}")
     public ResponseEntity<?> getTempalte(@PathVariable("id") Long id) throws IOException{
 
         try {
@@ -92,7 +93,7 @@ public class DocumentController {
         }
     }
 
-    @PostMapping("/{id}/generate")
+    @PostMapping("/templates/{id}/generate")
     public ResponseEntity<?> generateDocument(@PathVariable("id") Long id,
                                               @RequestBody GenerateDocumentRequest request
                                               ) throws IOException {
@@ -137,5 +138,12 @@ public class DocumentController {
 
     }
 
+    @GetMapping("/documents")
+    public ResponseEntity<List<DocumentPresentator>> getAllDocument() throws IOException {
+
+        List<DocumentPresentator> templates = documentService.getAllDocument();
+
+        return ResponseEntity.ok(templates);
+    }
 
 }
