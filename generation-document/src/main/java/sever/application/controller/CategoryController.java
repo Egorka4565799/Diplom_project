@@ -1,6 +1,7 @@
 package sever.application.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import sever.application.service.CategoryService;
 import sever.application.service.TemplateService;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +25,8 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping()
-    public ResponseEntity<List<CategoryPresentator>> getAllCategorys() throws IOException {
+    @GetMapping()//Список всех категорий
+    public ResponseEntity<List<CategoryPresentator>> getAllCategories() throws IOException {
 
         List<Category> categories =  categoryService.getAll();
 
@@ -36,39 +38,50 @@ public class CategoryController {
         return ResponseEntity.ok(presentors);
     }
 
-    @PostMapping()
-    public ResponseEntity<String> addCategory(@RequestParam("categoryName") String categoryName
+    @PostMapping()//Создание новой категории
+    public ResponseEntity<?> addCategory(@RequestParam("categoryName") String categoryName
     ) throws IOException {
 
-        categoryService.addCategory(categoryName);
+        // Декодируем строку
+        String decodedCategoryName = URLDecoder.decode(categoryName, "UTF-8");
 
+        System.out.println("Новая категория: " + decodedCategoryName);
+
+        Category category = categoryService.addCategory(decodedCategoryName);
+
+        CategoryPresentator categoryPresentator= new CategoryPresentator(category);
         System.out.println("Successfully add category");
-        System.out.println(categoryName);
-
-        return ResponseEntity.ok("Successfully add category");
+        //System.out.println(categoryName);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String categoriesJson = objectMapper.writeValueAsString(categoryPresentator);
+        return ResponseEntity.ok(categoryPresentator);
     }
 
-    @PutMapping("/{id}")//Реализовать
-    public ResponseEntity<String> updateGategoryId(){
+    @PutMapping("/{id}")//Обновление категории
+    public ResponseEntity<?> updateCategoryId(@PathVariable("id") Long categoryId,
+                                              @RequestParam("categoryName") String categoryName
+    ) throws IOException {
 
-        ///Реализация
+        // Декодируем строку
+        String decodedCategoryName = URLDecoder.decode(categoryName, "UTF-8");
 
-        return ResponseEntity.ok("Successfully update category");
+        System.out.println("Обновленная категория: " + decodedCategoryName);
+
+        Category category = categoryService.updateCategory(decodedCategoryName, categoryId);
+
+        CategoryPresentator categoryPresentator= new CategoryPresentator(category);
+        System.out.println("Successfully update category");
+
+        return ResponseEntity.ok(categoryPresentator);
+
     }
 
-    @GetMapping("/{id}")//Реализовать
-    public ResponseEntity<String> getGategoryId(){
 
-        ///Реализация
+    @DeleteMapping("/{id}")//Удаление категории
+    public ResponseEntity<String> deleteCategoryId(@PathVariable("id") Long categoryId){
 
-        return ResponseEntity.ok("Successfully update category");
+        categoryService.deleteCategory(categoryId);
+        return ResponseEntity.ok("Category deleted successfully");
     }
 
-    @DeleteMapping("/{id}")//Реализовать
-    public ResponseEntity<String> deleteGategoryId(){
-
-        ///Реализация
-
-        return ResponseEntity.ok("Successfully update category");
-    }
 }

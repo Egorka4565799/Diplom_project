@@ -5,6 +5,8 @@ import sever.application.model.Category;
 import sever.application.model.ReplaceWordMapping;
 import sever.application.model.Template;
 import sever.application.model.User;
+import sever.application.presentator.ReplaceWordMappingPresentor;
+import sever.application.presentator.TemplatePresentator;
 import sever.application.repository.CategoryRepostory;
 import sever.application.repository.TemplateRepository;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -178,12 +180,13 @@ public class TemplateService {
 
     }
 
-    public Map<Long,String> getAllTemplates(){
+    public List<TemplatePresentator> getAllTemplates(){
 
         List<Template> templates = templateRepository.findAll();
 
         return templates.stream()
-                .collect(Collectors.toMap(Template::getId, Template::getTemplateName));
+                .map(TemplatePresentator::new)
+                .collect(Collectors.toList());
     }
 
     public List<ReplaceWordMapping> getReplaceWordsTemplate(Long templateId){

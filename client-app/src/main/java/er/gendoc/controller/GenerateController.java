@@ -1,9 +1,7 @@
 package er.gendoc.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import er.gendoc.resentator.DocumentFormat;
-import er.gendoc.resentator.ReplaceWordMapping;
-import er.gendoc.resentator.TemplateResponse;
+import er.gendoc.resentator.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -49,20 +47,30 @@ public class GenerateController {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // Получаем данные о templates с сервера с использованием объекта запроса
-        ResponseEntity<Map<Long, String>> response = restTemplate.exchange(
+        ResponseEntity<List<Template>> responseTemplate = restTemplate.exchange(
                 "http://localhost:8083/templates",
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<Map<Long, String>>() {});
+                new ParameterizedTypeReference<List<Template>>() {});
 
         // Извлекаем список шаблонов из ResponseEntity
-        Map<Long, String> templates = response.getBody();
+        List<Template> templates = responseTemplate.getBody();
+
+        // Получение списка категорий
+        ResponseEntity<List<Category>> responseCategories = restTemplate.exchange(
+                "http://localhost:8083/categories",
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<Category>>() {});
+        List<Category> categories = responseCategories.getBody();
+
+        model.addAttribute("categories", categories);
 
         // Помещаем список шаблонов в модель, чтобы они были доступны в HTML шаблоне
         model.addAttribute("templates", templates);
 
         // Возвращаем имя HTML шаблона, который будет использоваться для отображения страницы выбора шаблона
-        return "template-selection";
+        return "selection_template_new";
     }
 
 
@@ -100,19 +108,19 @@ public class GenerateController {
 
         // Получаем данные из ответа сервера
         TemplateResponse templateResponse = response.getBody();
-        byte[] documentContent = templateResponse.getDocumentContent();
+        //byte[] documentContent = templateResponse.getDocumentContent();
         List<ReplaceWordMapping> replaceWords = templateResponse.getReplaceWordMappings();
         String documentName = templateResponse.getDocumentName();
-        System.out.println("File= "+ documentContent);
+        //System.out.println("File= "+ documentContent);
 
         // Кодируем байты документа в строку Base64
-        String documentContentBase64 = Base64.getEncoder().encodeToString(documentContent);
-        System.out.println("documentContentBase64= "+ documentContentBase64);
+        //String documentContentBase64 = Base64.getEncoder().encodeToString(documentContent);
+        //System.out.println("documentContentBase64= "+ documentContentBase64);
         // Преобразуем байты документа в строку для отображения (например, если это текстовый файл)
         //String documentText = new String(documentContent);
 
         // Помещаем данные в модель, чтобы они были доступны в HTML шаблоне
-        model.addAttribute("documentContent", documentContentBase64);
+        //model.addAttribute("documentContent", documentContentBase64);
         model.addAttribute("replaceWords", replaceWords);
         model.addAttribute("templateName", documentName);
         model.addAttribute("templateId", id);

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Категории</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -45,54 +45,10 @@
     </div>
 </div>
 
-<script>
-    let categories = ['Категория 1', 'Категория 2', 'Категория 3'];
+<!-- Скрытое поле для хранения категорий -->
+<input type="hidden" id="categoriesData" th:value='${categoriesJson}' />
 
-    document.addEventListener('DOMContentLoaded', function() {
-        displayCategories();
-
-        document.getElementById('searchCategory').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            displayCategories(searchTerm);
-        });
-    });
-
-    function displayCategories(searchTerm = '') {
-        const categoryList = document.getElementById('categoryList');
-        categoryList.innerHTML = '';
-
-        categories.filter(category => category.toLowerCase().includes(searchTerm)).forEach(category => {
-            const categoryItem = document.createElement('div');
-            categoryItem.className = 'category-item';
-            categoryItem.innerHTML = `
-                <span>${category}</span>
-                <button class="btn btn-secondary" onclick="editCategory('${category}')">Редактировать</button>
-            `;
-            categoryList.appendChild(categoryItem);
-        });
-    }
-
-    function addCategory() {
-        const newCategoryName = document.getElementById('newCategoryName').value.trim();
-        if (newCategoryName) {
-            categories.push(newCategoryName);
-            displayCategories();
-            document.getElementById('newCategoryName').value = '';
-        }
-    }
-
-    function editCategory(category) {
-        const newCategoryName = prompt('Введите новое имя для категории', category);
-        if (newCategoryName) {
-            const index = categories.indexOf(category);
-            if (index !== -1) {
-                categories[index] = newCategoryName;
-                displayCategories();
-            }
-        }
-    }
-</script>
-
+<script src="/js/categories/categories_request_script.js"></script>\
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 

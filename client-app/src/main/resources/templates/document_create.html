@@ -62,7 +62,7 @@
     </div>
 
     <div class="download-section">
-        <button class="download-button-start" id="download-button-start"  onclick="startDownload()">Скачать документ</button>
+        <button class="download-button-start" id="download-button-start"  >Скачать документ</button>
         <div class="overlay" id="overlay" style="display: none;">
             <div class="loader"></div>
         </div>    
@@ -73,5 +73,17 @@
     </footer>    
 
     <script src="/js/document_create.js"></script>\
+    <script>
+        function selectFormat(format) {
+            document.getElementById('format').value = format;
+            document.getElementById('docx-img').classList.remove('selected');
+            document.getElementById('pdf-img').classList.remove('selected');
+            if (format === 'DOCX') {
+                document.getElementById('docx-img').classList.add('selected');
+            } else {
+                document.getElementById('pdf-img').classList.add('selected');
+            }
+        }
+    </script>
 </body>
 </html>

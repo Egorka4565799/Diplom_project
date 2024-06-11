@@ -112,6 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const action = form.action;
 
+        console.log("formData: " + form);
+
         fetch(action, {
             method: 'POST',
             body: formData

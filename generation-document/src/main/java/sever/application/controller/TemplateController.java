@@ -4,6 +4,7 @@ import sever.application.model.ReplaceWordMapping;
 import sever.application.model.Template;
 import sever.application.model.User;
 import sever.application.presentator.ReplaceWordMappingPresentor;
+import sever.application.presentator.TemplatePresentator;
 import sever.application.service.TemplateService;
 //import sever.application.UserService;
 import org.slf4j.Logger;
@@ -113,11 +114,9 @@ public class TemplateController {
 
 
     @GetMapping()  // Получить список всех шаблонов
-    public ResponseEntity<Map<Long,String>> getAllTemplate() throws IOException {
+    public ResponseEntity<List<TemplatePresentator>> getAllTemplate() throws IOException {
 
-        Map<Long, String> templates = new HashMap<>();
-
-        templates=templateService.getAllTemplates();
+        List<TemplatePresentator> templates = templateService.getAllTemplates();
 
         return ResponseEntity.ok(templates);
     }

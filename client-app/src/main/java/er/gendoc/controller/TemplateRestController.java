@@ -156,38 +156,37 @@ public class TemplateRestController {
         return response;
     }
 
-    @PostMapping("/add-category") // Добавить категорию
-    public ResponseEntity<String> addCategory(@RequestParam("categoryName") String categoryName){
+    @PutMapping("/set-category")// Заменить категорию у шаблона
+    public ResponseEntity<String> setCategoryToTemplate(@RequestParam("fileId") Long fileId,
+                                                        @RequestParam("categoryId") Long categoryId) {
         // Получаем токен доступа
         String token = getToken();
-
-        System.out.println(
-                "Категория: " + categoryName
-        );
 
         // Подготавливаем заголовки запроса
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
 
-        // Подготовка URL с параметрами
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8083/categories")
-                .queryParam("categoryName", categoryName);
+
+        // Строим URL с новой категорией как параметром
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl("http://localhost:8083/templates/" + fileId + "/category")
+                .queryParam("categoryId", categoryId);
+
 
         // Подготавливаем тело запроса
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        // Подготавливаем заголовки запроса без тела
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
         // Отправляем запрос на сервер
         ResponseEntity<String> response = restTemplate.exchange(
                 builder.toUriString(), // Используем построенный URL
-                HttpMethod.POST,
+                HttpMethod.PUT,
                 requestEntity,
                 String.class);
 
         return response;
     }
-
-
 
     // Метод для получения токена доступа
     private String getToken() {

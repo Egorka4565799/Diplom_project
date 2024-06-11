@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список шаблонов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+        }
+        .categories {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+        .category {
+            margin-bottom: 10px;
+        }
+
+
+
+        .templates {
+            flex: 3;
+            padding: 20px;
+        }
+
+        .search {
+            margin-bottom: 20px;
+        }
+        .search input[type="text"] {
+            width: calc(100% - 50px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .search input[type="submit"] {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* Стили для чекбоксов категорий */
+.category-checkbox:checked + label::before {
+    background-color: #ffffcc; /* Светло желтый цвет */
+}
+
+/* Стили для списка шаблонов */
+.template {
+
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.template::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -8px; /* Сдвигаем левую границу влево */
+    bottom: -1px;
+    width: 4px; /* Ширина левой границы */
+    background-color: gray; /* Серый цвет для левой границы */
+    z-index: 1; /* Размещаем границу поверх содержимого */
+}
+
+.template::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%; /* Ширина нижней границы */
+    height: 1px; /* Высота нижней границы */
+    background-color: #3f51b5; /* Синий цвет для нижней границы */
+    z-index: 1; /* Размещаем границу поверх содержимого */
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="categories">
+        <h2>Категории</h2>
+        <div th:each="category : ${categories}" class="category">
+            <input type="checkbox" th:id="'category' + ${category.id}" class="category-checkbox" th:data-category-id="${category.id}">
+            <label th:for="'category' + ${category.id}" class="custom-checkbox"></label>
+            <span th:text="${category.categoryName}">Категория</span>
+        </div>
+    </div>
+    <div class="templates">
+        <h2>Шаблоны</h2>
+        <div class="search">
+            <input type="text"  id="searchInput" placeholder="Поиск по названию">
+        </div>
+        <div id="templateList">
+            <!-- Здесь будут отображаться шаблоны -->
+
+            <div th:each="template : ${templates}" th:data-template-id="${template.templateId}" th:data-category-id="${template.categoryId}" class="template">
+                <a th:href="@{/template/{id}(id=${template.templateId})}" th:text="${template.templateName}" class="template-link">Какой-то шаблон</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+     const searchInput = document.getElementById('searchInput');
+     const checkboxes = document.querySelectorAll('.category-checkbox');
+     const templates = document.querySelectorAll('.template');
+
+     function filterTemplates() {
+         const searchValue = searchInput.value.toLowerCase();
+         const selectedCategories = Array.from(checkboxes)
+             .filter(checkbox => checkbox.checked)
+             .map(checkbox => parseInt(checkbox.getAttribute('data-category-id')));
+
+         templates.forEach(template => {
+             const templateName = template.querySelector('.template-link').textContent.toLowerCase();
+             const templateCategoryId = parseInt(template.getAttribute('data-category-id'));
+
+             const matchesSearch = !searchValue || templateName.includes(searchValue);
+             const matchesCategory = !selectedCategories.length || selectedCategories.includes(templateCategoryId);
+
+             if (matchesSearch && matchesCategory) {
+                 template.style.display = '';
+             } else {
+                 template.style.display = 'none';
+             }
+         });
+     }
+
+     checkboxes.forEach(checkbox => {
+         checkbox.addEventListener('change', filterTemplates);
+     });
+
+     searchInput.addEventListener('input', filterTemplates);
+
+     // При загрузке страницы отображаем все шаблоны
+     filterTemplates();
+ });
+</script>
+</body>
+</html>
+
