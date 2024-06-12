@@ -22,11 +22,19 @@ header {
     margin: 20px;
     padding: 10px;
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
     text-align: center;
     border: 1px solid #B7C2D8;
 }
-
+.doc-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .docx-pdf-container{
+        display: flex;
+                    justify-content: space-between;
+        }
 /* Стили для изображений типов файлов */
 .docx-pdf-img {
     height: 20px;

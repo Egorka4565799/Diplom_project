@@ -18,6 +18,9 @@
 }
 
    function uploadFile(file, category) {
+        var overlay = document.getElementById('overlay');
+        overlay.style.display = 'flex';
+
        var formData = new FormData();
        formData.append("file", file);
 
@@ -35,11 +38,17 @@
                // Далее можно выполнить второй запрос или другие действия
                setCategoryToTemplate(fileId,category);
                viewReplaceWords(fileId); // Передаем id загруженного файла для использования во втором запросе
+               // Останавливаем анимацию после получения ответа
+               document.getElementById('overlay').style.display = 'none';
            } else {
+           // Останавливаем анимацию после получения ответа
+                           document.getElementById('overlay').style.display = 'none';
                console.error("Failed to upload file");
            }
        };
        xhr.onerror = function() {
+       // Останавливаем анимацию после получения ответа
+                       document.getElementById('overlay').style.display = 'none';
            console.error("Network error");
        };
        xhr.send(formData);
@@ -119,10 +128,16 @@
 
            var button = document.createElement("button");
            button.type = "button";
-           button.textContent = "Add Replacement";
+           button.textContent = "Add";
            button.onclick = function() {
                addReplacementInput(word);
            };
+           var buttonRemove = document.createElement("button");
+                       buttonRemove.type = "button";
+                       buttonRemove.textContent = "Remove";
+                       buttonRemove.onclick = function() {
+                           removeReplacementInput(word);
+                       };
            var liReplacement = document.createElement("li");
            var input = document.createElement("input");
            input.type = "text";
@@ -134,6 +149,7 @@
            li.appendChild(addReplacementLabel);
            li.appendChild(ul);
            ul.appendChild(button);
+           ul.appendChild(buttonRemove);
            ul.appendChild(liReplacement);
            liReplacement.appendChild(input);
            wordsBlock.appendChild(li);
@@ -207,6 +223,7 @@ function uploadData() {
 
             xhr.onload = function() {
                 if (xhr.status === 200) {
+                    showModal("Замены успешно установленны!");
                     console.log('Данные успешно отправлены');
                     console.log(requestBody);
                     console.log(key);
@@ -236,11 +253,18 @@ function addReplacementInput(key) {
     input.type = "text";
     input.name = "words[" + key + "].value[" + (ul.children.length - 1) + "]";
     input.placeholder = "Enter value";
+    input.className = "form-control";
     var li = document.createElement("li");
     li.appendChild(input);
     ul.appendChild(li);
 }
 
+function removeReplacementInput(key) {
+        var ul = document.getElementById("replacements-" + key);
+        if (ul.children.length > 3) { // Ensure there's at least one replacement input left
+            ul.removeChild(ul.lastChild);
+        }
+    }
 //------------------------------------Модальное окно
 function showModal(message) {
             var modal = document.getElementById("modal");

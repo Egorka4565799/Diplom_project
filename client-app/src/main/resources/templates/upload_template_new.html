@@ -4,92 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Загрузка шаблона</title>
-    <link rel="stylesheet" href="/css/document_create.css">
+    <link rel="stylesheet" href="/css/upload-template/general.css">
+    <link rel="stylesheet" href="/css/upload-template/field_replcae.css">
+    <link rel="stylesheet" href="/css/upload-template/dynamic_element.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <!--
-    <link rel="stylesheet" href="/css/body.css">
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/document-creation-form.css">
-    <link rel="stylesheet" href="/css/footer.css">
-    -->
-    <style>
-        /* Стили для модального окна */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 100px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 70%;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: #333;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .modal-footer {
-            border-top: 1px solid #888;
-            padding-top: 10px;
-            margin-top: 20px;
-            text-align: right;
-        }
-        .modal-footer button {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .modal-footer button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="/css/footer_no_main.css">
+
 </head>
 
 <body>
 <header>
-    Шапка
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/select-template">Выбор шаблона</a>
+        <a href="/upload_template">Загрузка шаблона</a>
+        <a href="/categories">Управление категориями</a>
+        <a href="/documents">Архив</a>
+    </nav>
 </header>
 
 <div class="settings-bar">
-    <div class="docx-pdf-img" id="docx-img"><img src="/img/html_docx.png" alt="PDF"></div>
-    <div class="docx-pdf-img" id="pdf-img"><img src="/img/html_pdf.png" alt="DOCX"></div>
+    Создайте шаблон и предоставте замены для переменных в нем
 </div>
 
 <div class="container">
     <div class="filter">
+        <h4>Загрузка шаблона</h4>
+        <hr/>
         <form id="uploadForm" method="post" enctype="multipart/form-data">
 
-            <input type="file" name="file" id="file">
-
+            <div class="form-group">
+                <label for="file">Выберите файл</label>
+                <input type="file" name="file" id="file">
+            </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input type="hidden" id="fileId" name="fileId" value=""> <!-- Скрытое поле для ID -->
-
-            <button type="button" onclick="uploadTemplate()">Загрузить шаблон</button>
-
-            <div id="category">
+            <div class="form-group category-group">
+                <label for="categoryId">Категория:</label>
                 <select id="categoryId" th:name="categoryId">
                     <option th:each="category : ${categories}"
                             th:value="${category.id}"
@@ -97,16 +49,12 @@
                         <!-- Каждая категория будет представлена здесь -->
                     </option>
                 </select>
-
             </div>
+            <button type="button" class="btn-primary" onclick="uploadTemplate()">Загрузить шаблон</button>
             <hr/>
-            <div>Создайте замены</div>
+            <h4>Создайте замены</h4>
             <hr/>
-            <div id="words" >
-
-            </div>
-
-
+            <div id="words" class="words-block"></div>
         </form>
 
     </div>
@@ -128,10 +76,9 @@
 </div>
 
 <div class="download-section">
-    <button class="download-button-start" id="download-button-start">Скачать документ</button>
     <div class="overlay" id="overlay" style="display: none;">
         <div class="loader"></div>
-        <button class="download-button-stop" id="download-button-stop">Остановить загрузку</button>
+
     </div>
 </div>
 
@@ -140,7 +87,7 @@
     <p>&copy; 2024 Все права защищены</p>
 </footer>
 
-<script src="/js/document_create.js"></script>\
+<script src="/js/upload-template/upload_style_script.js"></script>\
 <script src="/js/upload-template/upload_template.js"></script>\
 </body>
 </html>

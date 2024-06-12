@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Категории</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/footer_no_main.css">
     <style>
         .category-item {
             display: flex;
@@ -18,10 +19,26 @@
         .category-item button {
             margin-left: 10px;
         }
+        .content {
+            max-height: 50vh; /* Adjust the height as needed */
+            overflow-y: auto;
+        }
+         .container {
+            flex: 1 0 auto;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-
+<header>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/select-template">Выбор шаблона</a>
+        <a href="/upload_template">Загрузка шаблона</a>
+        <a href="/categories">Управление категориями</a>
+        <a href="/documents">Архив</a>
+    </nav>
+</header>
 <div class="container mt-5">
     <h1 class="text-center">Управление категориями</h1>
 
@@ -39,7 +56,7 @@
     </div>
 
     <div class="row mt-4">
-        <div class="col-md-6 offset-md-3" id="categoryList">
+        <div class="col-md-6 offset-md-3 content" id="categoryList">
             <!-- Список категорий -->
         </div>
     </div>
@@ -47,6 +64,10 @@
 
 <!-- Скрытое поле для хранения категорий -->
 <input type="hidden" id="categoriesData" th:value='${categoriesJson}' />
+
+<footer>
+    <p>&copy; 2024 Все права защищены</p>
+</footer>
 
 <script src="/js/categories/categories_request_script.js"></script>\
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

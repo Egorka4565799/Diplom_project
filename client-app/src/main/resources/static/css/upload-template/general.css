@@ -1,0 +1,124 @@
+/* Общие стили для body и html */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    position: relative;
+}
+
+/* Стили для шапки */
+header {
+    background-color: #69c;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+/* Стили для полосы настроек */
+.settings-bar {
+    background-color: #ffffff;
+    margin: 20px;
+    padding: 10px;
+
+
+    text-align: center;
+    border: 1px solid #B7C2D8;
+}
+
+
+
+/* Стили для контейнера с фильтром и текстом */
+.container {
+    display: flex;
+    height: calc(100% - 19sadapx); /* Adjusting height to exclude header and settings bar */
+    position: relative;
+}
+
+/* Стили для фильтра */
+.filter, .text {
+    border: 1px solid #b7c2d8;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.filter {
+    background-color: #fff;
+    width: 30%;
+    margin: 10px;
+    padding: 20px;
+}
+
+/* Стили для текстового контейнера */
+.text {
+    background-color: #fff;
+    width: 70%;
+    margin: 10px;
+    padding: 20px;
+    transition: width 0.3s ease;
+}
+
+/* Скрытие текстового контейнера */
+.text.hidden {
+    width: 0;
+    padding: 20px 0;
+}
+
+/* Стили для кнопки переключения */
+.toggle-button {
+    position: absolute;
+    top: 50%;
+    right: calc(70% - 18px);
+    width: 30px;
+    transform: translateY(-50%);
+    background-color: #69c;
+    color: white;
+    border: none;
+    border-radius: 10px 20px 20px 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    z-index: 1;
+    transition: right 0.3s ease, transform 0.3s ease;
+}
+
+/* Обратное состояние кнопки переключения */
+.toggle-button.reverse {
+    border-radius: 20px 10px 10px 20px;
+}
+
+/* Стили для кнопки скачивания */
+.download-button-start {
+    position: absolute;
+    display: block;
+    bottom: 20px;
+    right: 20px;
+    background-color: #69c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+
+
+/* styles.css */
+
+footer {
+    background-color: #69c;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    height: 20px;
+    font-size: 14px;
+    color: #fff;
+}

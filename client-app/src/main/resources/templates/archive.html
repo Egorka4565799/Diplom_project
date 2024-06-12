@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Document List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/footer_no_main.css">
     <style>
         .container {
             display: flex;
-            height: 100vh;
+            height: 90vh;
         }
         .search-container {
             flex: 1;
@@ -17,7 +18,7 @@
         .results-container {
             flex: 2;
             padding: 20px;
-            overflow-y: auto;
+
         }
         .table-container {
             height: calc(100vh - 160px); /* Adjust height based on your header and padding/margin */
@@ -26,6 +27,15 @@
     </style>
 </head>
 <body>
+<header>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/select-template">Выбор шаблона</a>
+        <a href="/upload_template">Загрузка шаблона</a>
+        <a href="/categories">Управление категориями</a>
+        <a href="/documents">Архив</a>
+    </nav>
+</header>
 <div class="container">
     <div class="search-container">
         <h1>Document Archive</h1>
@@ -67,6 +77,11 @@
         </div>
     </div>
 </div>
+
+<footer>
+    <p>&copy; 2024 Все права защищены</p>
+</footer>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Получаем ссылки на элементы формы и результатов

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список шаблонов</title>
+    <link rel="stylesheet" href="/css/footer_no_main.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,9 +80,23 @@
     background-color: #3f51b5; /* Синий цвет для нижней границы */
     z-index: 1; /* Размещаем границу поверх содержимого */
 }
+         .template-list-container {
+
+            overflow-y: auto;
+            max-height: 70vh; /* Максимальная высота для прокрутки */
+        }
     </style>
 </head>
 <body>
+<header>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/select-template">Выбор шаблона</a>
+        <a href="/upload_template">Загрузка шаблона</a>
+        <a href="/categories">Управление категориями</a>
+        <a href="/documents">Архив</a>
+    </nav>
+</header>
 <div class="container">
     <div class="categories">
         <h2>Категории</h2>
@@ -96,7 +111,7 @@
         <div class="search">
             <input type="text"  id="searchInput" placeholder="Поиск по названию">
         </div>
-        <div id="templateList">
+        <div class="template-list-container" id="templateList">
             <!-- Здесь будут отображаться шаблоны -->
 
             <div th:each="template : ${templates}" th:data-template-id="${template.templateId}" th:data-category-id="${template.categoryId}" class="template">
@@ -105,6 +120,10 @@
         </div>
     </div>
 </div>
+
+<footer>
+    <p>&copy; 2024 Все права защищены</p>
+</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
