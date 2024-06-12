@@ -22,10 +22,15 @@ body {
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 10px;
-    margin: 30px auto;
-    max-width: 600px;
+    margin: 5px auto;
+    max-width: 100%;
 }
-
+.main-image {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: cover;
+}
 h1 {
     color: #6598CE;
 }

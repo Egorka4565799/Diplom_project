@@ -1,6 +1,8 @@
 package er.gendoc.controller;
 
 import er.gendoc.resentator.Greetings;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -63,4 +65,5 @@ public class GreetingController {
                         .body(Greetings.class));
         return "main";
     }
+
 }

@@ -10,10 +10,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +32,16 @@ public class SecurityBeans {
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 )
                 .csrf(CsrfConfigurer::disable)
-                .authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated())
+                .authorizeRequests(configurer -> configurer
+                .requestMatchers("/main").permitAll()// Доступ для всех к странице main
+                .requestMatchers("/select-template", "/document-create").hasRole("PERFORMER") // Доступ только для пользователей с ролью PERFORMER к /select-template и /document-create
+                .anyRequest().hasRole("ADMIN"))
                 .oauth2Client(Customizer.withDefaults())
                 .oauth2Login(Customizer.withDefaults())
                 .build();
     }
+
+
 
     @Bean
     public OAuth2UserService<OidcUserRequest, OidcUser> oAuth2UserService() {

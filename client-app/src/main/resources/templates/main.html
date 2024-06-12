@@ -13,14 +13,16 @@
     <body>
         <header>
             <h1 data-th-text="${greetings?.greeting}"></h1>
-            <h2>Сгенерировано для <span data-th-text="${principal?.name}"></span></h2>
+<!--            <h1></h1><i>Сгенерировано для <span data-th-text="${principal?.name}"></span></i></h1>-->
+<!--            <div th:if="${#request.isUserInRole('ROLE_PERFORMER')}">-->
+<!--                <a href="#" onclick="logout()">Выйти</a>-->
+<!--            </div>-->
+
         </header>
+
         
         <div class="container">
-            <div class="button-container">
-                <button class="btn"><a style="text-decoration: none;" href="/upload_template">Загрузить шаблон</a></button>
-                <button class="btn"><a href="/select-template">Выбрать шаблон</a></button>
-            </div>
+            <img src="/static/img/main_schem.png"  class="main-image">
         </div>
 
         <footer>
@@ -32,10 +34,11 @@
                 <div class="footer-section links">
                     <h3>Ссылки:</h3>
                     <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/select-template">Выбор шаблона</a></li>
+                        <li><a href="/upload_template">Загрузка шаблона</a></li>
+                        <li><a href="/categories">Управление категориями</a></li>
+                        <li><a href="/documents">Архив</a></li>
                     </ul>
                 </div>
                 <div class="footer-section contact">
