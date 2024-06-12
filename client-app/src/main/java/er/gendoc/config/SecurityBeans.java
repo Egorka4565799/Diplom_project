@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,11 +20,15 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityBeans {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                )
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated())
                 .oauth2Client(Customizer.withDefaults())

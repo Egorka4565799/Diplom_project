@@ -138,6 +138,38 @@ public class DocumentController {
 
     }
 
+    @GetMapping("/templates/{id}/data")// Получить список только переменных в шаблоне
+    public ResponseEntity<?> getReplaceWord(@PathVariable("id") Long id
+    ) throws IOException {
+
+        try{
+            Template template = documentService.findById(id);
+
+            if (template == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Template not found");
+            }
+
+            String originalFileName = template.getTemplateName();
+            int lastDotIndex = originalFileName.lastIndexOf(".");
+            String fileNameWithoutExtension = originalFileName.substring(0, lastDotIndex);
+            System.out.println(fileNameWithoutExtension);
+            HttpHeaders headers = new HttpHeaders();
+
+
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", fileNameWithoutExtension+".pdf");
+
+            byte[] documentBytes = documentService.viewDataTemplate(template);
+
+
+            return new ResponseEntity<>(documentBytes, headers, HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to download document");
+        }
+
+
+    }
+
     @GetMapping("/documents")
     public ResponseEntity<List<DocumentPresentator>> getAllDocument() throws IOException {
 

@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+var templateId = document.getElementById('templateId').value;
+loadPDF(templateId);
     // Определение переменных
     var toggleButton = document.getElementById('toggleButton');
     var textContainer = document.querySelector('.text');
@@ -131,4 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+function loadPDF(templateId) {
+        var iframe = document.getElementById('documentView');
+        iframe.src = '/template/' + templateId + '/data';
+    }
 });

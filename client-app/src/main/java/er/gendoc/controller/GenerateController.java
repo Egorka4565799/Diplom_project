@@ -129,6 +129,36 @@ public class GenerateController {
         return "document_create";
     }
 
+    @GetMapping("/template/{id}/data")
+    public ResponseEntity<byte[]> dataTemplate(@PathVariable("id") Long id, Model model) {
+        // Создаем HTTP заголовки и устанавливаем токен доступа
+        HttpHeaders headers = new HttpHeaders();
+        var token = getToken();
+        headers.setBearerAuth(token);
+
+        // Создаем объект запроса с установленными заголовками
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(
+                "http://localhost:8083/templates/" + id +"/data",
+                HttpMethod.GET,
+                entity,
+                byte[].class
+        );
+
+        // Получаем данные из ответа сервера
+        byte[] documentContent =  response.getBody();
+        System.out.println(documentContent);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.APPLICATION_PDF);
+            return new ResponseEntity<>(response.getBody(), responseHeaders, HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(response.getStatusCode()).body(null);
+        }
+    }
 
     @PostMapping("/template/{id}/generate")
     public ResponseEntity<?> generateDocument(@PathVariable("id") Long id,

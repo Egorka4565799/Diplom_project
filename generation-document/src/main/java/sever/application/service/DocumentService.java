@@ -80,6 +80,18 @@ public class DocumentService {
 
     }
 
+    public byte[] viewDataTemplate(Template template) throws Exception {
+        Document doc = new Document(new ByteArrayInputStream(template.getTemplateData()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        doc.save(outputStream, SaveFormat.PDF);
+
+
+        return outputStream.toByteArray();
+
+    }
+
     public void saveDocumentToArchive(String fileName, byte[] fileData){
 
         sever.application.model.Document document = new sever.application.model.Document();

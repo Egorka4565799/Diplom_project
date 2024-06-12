@@ -33,10 +33,12 @@
 
                console.log("File uploaded successfully, ID: " + fileId);
 
+
                // Сохранение id в скрытое поле
                document.getElementById("fileId").value = fileId;
                // Далее можно выполнить второй запрос или другие действия
                setCategoryToTemplate(fileId,category);
+               loadPDF(fileId);//Отображаем документ в окне
                viewReplaceWords(fileId); // Передаем id загруженного файла для использования во втором запросе
                // Останавливаем анимацию после получения ответа
                document.getElementById('overlay').style.display = 'none';
@@ -74,6 +76,10 @@
       };
       xhr.send();
    }
+   function loadPDF(templateId) {
+           var iframe = document.getElementById('documentView');
+           iframe.src = '/template/' + templateId + '/data';
+       }
    function viewReplaceWords(fileId) {
        var xhr = new XMLHttpRequest();
 
